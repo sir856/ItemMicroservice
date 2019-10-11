@@ -12,13 +12,13 @@ public class Item {
     @Id
     private long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "amount", nullable = false)
+    @Column(name = "amount")
     private int amount;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "price")
     private long price;
 
     Item(String name, int amount, long price) {
