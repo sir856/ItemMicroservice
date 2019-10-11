@@ -16,12 +16,12 @@ public class Item {
     private String name;
 
     @Column(name = "amount")
-    private int amount;
+    private Integer amount;
 
     @Column(name = "price")
-    private long price;
+    private Long price;
 
-    Item(String name, int amount, long price) {
+    Item(String name, Integer amount, Long price) {
         this.name = name;
         this.amount = amount;
         this.price = price;
@@ -53,5 +53,11 @@ public class Item {
 
     public void setPrice(long price) {
         this.price = price;
+    }
+
+    public void alter(final Item item) {
+        this.name = item.name == null ? this.name : item.name;
+        this.amount = item.amount == null ? this.amount : item.amount;
+        this.price = item.price == null ? this.price : item.price;
     }
 }

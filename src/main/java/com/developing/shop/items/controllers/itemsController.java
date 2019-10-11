@@ -1,7 +1,6 @@
 package com.developing.shop.items.controllers;
 
 import com.developing.shop.items.model.Item;
-import com.developing.shop.items.repository.ItemRepository;
 import com.developing.shop.items.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,5 +34,10 @@ public class itemsController {
     @DeleteMapping("/items/{id}")
     public Item deleteItem(@PathVariable("id") long id) {
         return itemService.delete(id);
+    }
+
+    @PutMapping("/items/{id}")
+    public Item alterItem(@PathVariable("id") long id, @RequestBody Item item) {
+        return itemService.alterItem(item, id);
     }
 }

@@ -38,8 +38,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item alterItem(Item item, long id) {
-        
-        return null;
+
+        // Todo throw exception if item not found
+        Item alteringItem = repository.findById(id).orElse(null);
+        alteringItem.alter(item);
+        return repository.save(alteringItem);
     }
 
 }
