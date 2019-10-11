@@ -26,6 +26,9 @@ public class Item {
         this.amount = amount;
         this.price = price;
     }
+    Item(){
+
+    }
 
     public long getId() {
         return id;

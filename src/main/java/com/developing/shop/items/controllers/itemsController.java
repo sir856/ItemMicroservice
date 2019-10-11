@@ -3,6 +3,7 @@ package com.developing.shop.items.controllers;
 import com.developing.shop.items.model.Item;
 import com.developing.shop.items.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class itemsController {
 
 
     @GetMapping("/items")
-    public List<Item> getItems(@RequestParam Map<String, String> params) {
+    public List<Item> getItems(@RequestBody @Nullable Map<String, String> params) {
         return itemService.getItems(params);
     }
 
