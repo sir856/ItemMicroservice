@@ -11,7 +11,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/warehouse")
 public class itemsController {
     @Autowired
     private ItemService itemService;
@@ -22,7 +22,7 @@ public class itemsController {
         return itemService.getItems(params);
     }
 
-    @PostMapping(value = "/items", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/items")
     public Item createItem(@RequestBody Item item) {
         return itemService.addItem(item);
     }

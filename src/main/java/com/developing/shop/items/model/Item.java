@@ -7,8 +7,7 @@ import javax.persistence.*;
 public class Item {
 
     @Column(name = "id", nullable = false)
-    @org.springframework.data.annotation.Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private long id;
 
