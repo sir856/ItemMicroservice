@@ -20,14 +20,15 @@ public class Item {
     @Column(name = "price")
     private Long price;
 
+    Item() {
+    }
+
     Item(String name, Integer amount, Long price) {
         this.name = name;
         this.amount = amount;
         this.price = price;
     }
-    Item(){
 
-    }
 
     public long getId() {
         return id;

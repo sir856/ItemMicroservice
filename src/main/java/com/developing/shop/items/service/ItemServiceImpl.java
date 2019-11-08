@@ -2,6 +2,8 @@ package com.developing.shop.items.service;
 
 import com.developing.shop.items.model.Item;
 import com.developing.shop.items.repository.ItemRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +17,16 @@ import java.util.function.Function;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    public String ORDER_BY = "orderBy";
-    public String NAME = "name";
-    public String AMOUNT = "amount";
-    public String AMOUNT_FROM = "amountFrom";
-    public String AMOUNT_TO = "amountTo";
-    public String PRICE = "price";
-    public String PRICE_FROM = "priceFrom";
-    public String PRICE_TO = "priceTo";
+    private static final Logger logger = LoggerFactory.getLogger(ItemServiceImpl.class);
+
+    private String ORDER_BY = "orderBy";
+    private String NAME = "name";
+    private String AMOUNT = "amount";
+    private String AMOUNT_FROM = "amountFrom";
+    private String AMOUNT_TO = "amountTo";
+    private String PRICE = "price";
+    private String PRICE_FROM = "priceFrom";
+    private String PRICE_TO = "priceTo";
 
     private final ItemRepository repository;
 
@@ -80,7 +84,7 @@ public class ItemServiceImpl implements ItemService {
 
             normalizeParams(params);
 
-            for (String key : params.keySet() ) {
+            for (String key : params.keySet()) {
                 if (predicatesMap.containsKey(key)) {
                     predicates.add(predicatesMap.get(key).apply(params.get(key)));
                 }
@@ -100,7 +104,7 @@ public class ItemServiceImpl implements ItemService {
                 result.add(ordersMap.get(orderStr));
             }
         }
-        return result ;
+        return result;
     }
 
     private void normalizeParams(Map<String, String> params) {
@@ -117,7 +121,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item getItemById(long id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No item with id : " + id));
     }
 
     @Override
@@ -129,7 +134,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item alterItem(Item item, long id) {
-        Item alteringItem = repository.findById(id).orElse(null);
+        Item alteringItem = getItemById(id);
         alteringItem.alter(item);
         return repository.save(alteringItem);
     }
