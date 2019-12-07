@@ -135,7 +135,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item alterItem(Item item, long id) {
         Item alteringItem = getItemById(id);
-        alteringItem.alter(item);
+        alteringItem.change(item);
         return repository.save(alteringItem);
     }
 

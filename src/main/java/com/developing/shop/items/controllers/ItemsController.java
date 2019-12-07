@@ -4,6 +4,8 @@ import com.developing.shop.items.model.Item;
 import com.developing.shop.items.service.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +24,12 @@ public class ItemsController {
     private Logger logger = LoggerFactory.getLogger(ItemsController.class);
 
     private final ItemService itemService;
+    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public ItemsController(ItemService itemService) {
+    public ItemsController(ItemService itemService, RabbitTemplate template) {
         this.itemService = itemService;
+        this.rabbitTemplate = template;
     }
 
     @GetMapping("/items")
@@ -35,7 +39,10 @@ public class ItemsController {
 
     @PostMapping(value = "/items")
     public Item createItem(@RequestBody Item item) {
-        return itemService.addItem(item);
+        item = itemService.addItem(item);
+        rabbitTemplate.setExchange("orderExchange");
+        rabbitTemplate.convertAndSend("add", item);
+        return item;
     }
 
     @GetMapping("/items/{id}")
@@ -45,12 +52,19 @@ public class ItemsController {
 
     @DeleteMapping("/items/{id}")
     public Item deleteItem(@PathVariable("id") long id) {
-        return itemService.delete(id);
+        Item item = itemService.delete(id);
+        rabbitTemplate.setExchange("orderExchange");
+        rabbitTemplate.convertAndSend("delete", item);
+        return item;
     }
 
     @PutMapping("/items/{id}")
     public Item alterItem(@PathVariable("id") long id, @RequestBody Item item) {
-        return itemService.alterItem(item, id);
+
+        item = itemService.alterItem(item, id);
+        rabbitTemplate.setExchange("orderExchange");
+        rabbitTemplate.convertAndSend("add", item);
+        return item;
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

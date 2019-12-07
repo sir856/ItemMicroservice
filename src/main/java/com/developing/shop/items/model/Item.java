@@ -1,24 +1,32 @@
 package com.developing.shop.items.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "item")
-public class Item {
+public class Item implements Serializable {
 
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private long id;
 
-    @Column(name = "name")
+    @Column
     private String name;
 
-    @Column(name = "amount")
+    @Column
     private Integer amount;
 
-    @Column(name = "price")
+    @Column
     private Long price;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "item")
+    @JsonProperty
+    private List<LogItem> logItems;
 
     Item() {
     }
@@ -58,7 +66,19 @@ public class Item {
         this.price = price;
     }
 
-    public void alter(final Item item) {
+    public void changeAmount(int amount) {
+        if (this.amount >= amount) {
+            this.amount -= amount;
+        }
+        else {
+            throw new IllegalArgumentException("Lacks " + (amount - this.amount) + " items with id : " + this.id );
+        }
+    }
+    public void addLogItem(LogItem item) {
+        this.logItems.add(item);
+    }
+
+    public void change(final Item item) {
         this.name = item.name == null ? this.name : item.name;
         this.amount = item.amount == null ? this.amount : item.amount;
         this.price = item.price == null ? this.price : item.price;
