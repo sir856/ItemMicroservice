@@ -9,7 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Component
 public class RabbitMqListener {
@@ -40,7 +44,21 @@ public class RabbitMqListener {
 
     @RabbitListener(queues = "deleteItemFromOrder")
     public void itemDeletedFromOrderHandler(ChosenItem chosenItem) {
+        Item item = itemRepository.findById(chosenItem.getItem().getId()).orElseThrow(()
+                -> new IllegalArgumentException("Wrong chosen item" ));
+        item.changeAmount(-chosenItem.getAmount());
+        itemRepository.save(item);
         logItemRepository.deleteByCompositeKey(chosenItem.getItem().getId(), chosenItem.getOrder().getId());
+    }
+
+    @RabbitListener(queues = "cancelToItem")
+    public void cancelOrder(long id) {
+        for (LogItem logItem : logItemRepository.getLogItemsFromOrder(id)) {
+            Item item = itemRepository.findById(logItem.getItem().getId()).orElseThrow(()
+                    -> new IllegalArgumentException("Wrong chosen item" ));
+            item.changeAmount(-logItem.getAmount());
+            itemRepository.save(item);
+        }
     }
 
 
