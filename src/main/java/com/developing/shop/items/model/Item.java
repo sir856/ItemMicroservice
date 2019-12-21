@@ -66,7 +66,7 @@ public class Item implements Serializable {
         this.price = price;
     }
 
-    public void changeAmount(int amount) {
+    public void decreaseAmount(int amount) {
         if (this.amount >= amount) {
             this.amount -= amount;
         }

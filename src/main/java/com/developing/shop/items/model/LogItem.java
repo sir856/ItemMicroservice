@@ -26,6 +26,9 @@ public class LogItem implements Serializable {
     @Column
     private long price;
 
+    @Column
+    private boolean cancelled;
+
     public LogItem(long orderId, Item item, int amount) {
         this.orderId = orderId;
         this.item = item;
@@ -62,5 +65,13 @@ public class LogItem implements Serializable {
 
     public void setPrice(long price) {
         this.price = price;
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

@@ -2,9 +2,9 @@ package com.developing.shop.items.controllers;
 
 import com.developing.shop.items.model.Item;
 import com.developing.shop.items.service.ItemService;
+import com.developing.shop.orders.messageListeners.data.MessageItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,7 +41,8 @@ public class ItemsController {
     public Item createItem(@RequestBody Item item) {
         item = itemService.addItem(item);
         rabbitTemplate.setExchange("orderExchange");
-        rabbitTemplate.convertAndSend("add", item);
+        MessageItem messageItem = new MessageItem(item.getId(), item.getName(), item.getAmount(), item.getPrice());
+        rabbitTemplate.convertAndSend("add", messageItem);
         return item;
     }
 
@@ -54,13 +55,12 @@ public class ItemsController {
     public Item deleteItem(@PathVariable("id") long id) {
         Item item = itemService.delete(id);
         rabbitTemplate.setExchange("orderExchange");
-        rabbitTemplate.convertAndSend("delete", item);
+        rabbitTemplate.convertAndSend("delete", id);
         return item;
     }
 
     @PutMapping("/items/{id}")
     public Item alterItem(@PathVariable("id") long id, @RequestBody Item item) {
-
         item = itemService.alterItem(item, id);
         rabbitTemplate.setExchange("orderExchange");
         rabbitTemplate.convertAndSend("add", item);
